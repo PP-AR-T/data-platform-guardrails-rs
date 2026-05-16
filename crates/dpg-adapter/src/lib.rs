@@ -56,7 +56,7 @@ pub mod sqlserver {
 }
 
 fn parse_metadata_text(content: &str) -> Result<MetadataModel, String> {
-    let mut version = String::from("v1");
+    let mut version = None;
     let mut dataset_name = String::new();
     let mut fields = Vec::new();
 
@@ -67,7 +67,11 @@ fn parse_metadata_text(content: &str) -> Result<MetadataModel, String> {
         }
 
         if let Some(value) = line.strip_prefix("version=") {
-            version = value.trim().to_string();
+            let parsed = value.trim();
+            if parsed.is_empty() {
+                return Err("Metadata version must not be empty.".to_string());
+            }
+            version = Some(parsed.to_string());
             continue;
         }
 
@@ -101,6 +105,10 @@ fn parse_metadata_text(content: &str) -> Result<MetadataModel, String> {
         return Err(format!("Unknown metadata directive: {line}"));
     }
 
+    let version = version.ok_or_else(|| {
+        "Missing required metadata directive: version=<model-version>".to_string()
+    })?;
+
     Ok(MetadataModel::new(
         version,
         Dataset::new(dataset_name, fields),
@@ -125,5 +133,12 @@ mod tests {
     fn rejects_unknown_directives() {
         let err = parse_metadata_text("oops=bad").expect_err("expected parse error");
         assert!(err.contains("Unknown metadata directive"));
+    }
+
+    #[test]
+    fn rejects_missing_version() {
+        let err = parse_metadata_text("dataset=sales_orders\nfield=order_id:string")
+            .expect_err("expected parse error");
+        assert!(err.contains("Missing required metadata directive"));
     }
 }

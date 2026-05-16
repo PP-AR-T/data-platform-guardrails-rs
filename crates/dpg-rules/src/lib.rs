@@ -31,6 +31,13 @@ pub fn validate(model: &MetadataModel) -> Vec<Violation> {
                 message: "Field name must not be empty.".to_string(),
             });
         }
+
+        if field.data_type.trim().is_empty() {
+            violations.push(Violation {
+                code: "field.data_type.empty",
+                message: "Field data_type must not be empty.".to_string(),
+            });
+        }
     }
 
     violations
@@ -63,5 +70,16 @@ mod tests {
 
         let violations = validate(&model);
         assert!(violations.is_empty());
+    }
+
+    #[test]
+    fn rejects_empty_field_data_type() {
+        let model = MetadataModel::new(
+            "v1",
+            Dataset::new("sales_orders", vec![Field::new("order_id", "", false)]),
+        );
+
+        let violations = validate(&model);
+        assert!(violations.iter().any(|v| v.code == "field.data_type.empty"));
     }
 }

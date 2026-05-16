@@ -20,6 +20,8 @@ jobs:
         run: cargo fmt --all -- --check
       - name: Clippy
         run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Feature compile (sqlserver adapter)
+        run: cargo check -p dpg-adapter --all-features
       - name: Test
         run: cargo test --workspace
 

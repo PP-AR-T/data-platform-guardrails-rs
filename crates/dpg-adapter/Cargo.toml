@@ -8,5 +8,8 @@ license.workspace = true
 default = []
 sqlserver = []
 
+[lints]
+workspace = true
+
 [dependencies]
 dpg-model = { path = "../dpg-model" }
