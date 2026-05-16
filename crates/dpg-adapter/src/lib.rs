@@ -3,6 +3,11 @@ use std::fs;
 use std::path::Path;
 
 pub trait MetadataSource {
+    /// Loads metadata from a source into the canonical model.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error string when the source cannot be read or parsed.
     fn load(&self) -> Result<MetadataModel, String>;
 }
 
