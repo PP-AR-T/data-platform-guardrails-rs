@@ -1,0 +1,16 @@
+platform: generic_lakehouse
+entities:
+  - entity_name: Customer-Entity
+    source:
+      system: source_crm
+      object: ""
+    target:
+      layer: raw
+      object: raw_customer
+    load:
+      load_type: incremental
+      primary_key: customer_id
+    rules:
+      allow_business_transforms_in_raw: true
+    dependencies:
+      - orders
