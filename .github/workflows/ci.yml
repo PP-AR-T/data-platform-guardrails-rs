@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - name: cargo fmt
-        run: cargo fmt --check
+        run: cargo fmt --all -- --check
       - name: cargo clippy
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --all-targets -- -D warnings
       - name: cargo test
         run: cargo test
