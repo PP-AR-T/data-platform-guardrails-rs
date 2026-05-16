@@ -10,11 +10,11 @@ const RULE_ID: &str = "dependency_integrity";
 
 pub fn validate(config: &Config) -> Vec<ValidationItem> {
     let entities = config.entities.as_deref().unwrap_or_default();
-    if entities.len() <= 1 {
+    if entities.is_empty() {
         return vec![warn(
             RULE_ID,
             None,
-            "dependency validation skipped for single-entity config",
+            "no entities available for dependency check",
         )];
     }
 
@@ -91,6 +91,46 @@ entities:
   - entity_name: customer
     dependencies: [orders]
   - entity_name: orders
+    dependencies: []
+"#,
+        )
+        .expect("yaml should parse");
+
+        let result = validate(&cfg);
+        assert!(
+            result
+                .iter()
+                .any(|i| i.message == "all dependencies refer to valid entities")
+        );
+    }
+
+    #[test]
+    fn dependencies_fail_for_single_entity_with_unknown_dependency() {
+        let cfg: Config = serde_yaml::from_str(
+            r#"
+platform: generic_lakehouse
+entities:
+  - entity_name: customer
+    dependencies: [orders]
+"#,
+        )
+        .expect("yaml should parse");
+
+        let result = validate(&cfg);
+        assert!(
+            result
+                .iter()
+                .any(|i| i.message.contains("does not refer to a valid entity"))
+        );
+    }
+
+    #[test]
+    fn dependencies_pass_for_single_entity_without_dependencies() {
+        let cfg: Config = serde_yaml::from_str(
+            r#"
+platform: generic_lakehouse
+entities:
+  - entity_name: customer
     dependencies: []
 "#,
         )
