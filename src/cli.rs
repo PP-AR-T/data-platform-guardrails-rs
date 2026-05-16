@@ -1,7 +1,9 @@
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Debug, Clone, Parser)]
-#[command(name = "lakehouse-contracts-rs")]
+#[command(name = "data-platform-guardrails-rs")]
 #[command(about = "Validate metadata-driven lakehouse ingestion configs")]
 pub struct Cli {
     #[command(subcommand)]
@@ -11,7 +13,7 @@ pub struct Cli {
 #[derive(Debug, Clone, Subcommand)]
 pub enum Commands {
     Validate {
-        config_path: String,
+        config_path: PathBuf,
         #[arg(long, value_enum, default_value_t = OutputFormat::Human)]
         format: OutputFormat,
     },

@@ -7,9 +7,18 @@ use crate::{
 const RULE_ID: &str = "naming_convention";
 
 pub fn validate(config: &Config) -> Vec<ValidationItem> {
+    let entities = config.entities.as_deref().unwrap_or_default();
+    if entities.is_empty() {
+        return vec![pass(
+            RULE_ID,
+            None,
+            "no entities available for naming check",
+        )];
+    }
+
     let mut out = Vec::new();
 
-    for entity in config.entities.as_deref().unwrap_or_default() {
+    for entity in entities {
         let name = entity
             .entity_name
             .clone()
@@ -26,16 +35,14 @@ pub fn validate(config: &Config) -> Vec<ValidationItem> {
                     "entity_name must match ^[a-z][a-z0-9_]*$",
                 ));
             }
-            None => {}
+            None => {
+                out.push(fail(
+                    RULE_ID,
+                    Some(name),
+                    "entity_name is required for naming check",
+                ));
+            }
         }
-    }
-
-    if out.is_empty() {
-        out.push(pass(
-            RULE_ID,
-            None,
-            "no entities available for naming check",
-        ));
     }
 
     out
@@ -86,6 +93,30 @@ entities:
             result
                 .iter()
                 .any(|i| i.message.contains("must match ^[a-z][a-z0-9_]*$"))
+        );
+    }
+
+    #[test]
+    fn naming_fails_when_entity_name_is_missing() {
+        let cfg: Config = serde_yaml::from_str(
+            r#"
+platform: generic_lakehouse
+entities:
+  - source: { system: source_crm, object: customers }
+"#,
+        )
+        .expect("yaml should parse");
+
+        let result = validate(&cfg);
+        assert!(
+            result
+                .iter()
+                .any(|i| i.message == "entity_name is required for naming check")
+        );
+        assert!(
+            !result
+                .iter()
+                .any(|i| i.message == "no entities available for naming check")
         );
     }
 }

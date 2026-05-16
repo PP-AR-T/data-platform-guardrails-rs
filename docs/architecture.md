@@ -1,6 +1,6 @@
 # Architecture
 
-`lakehouse-contracts-rs` is a single-binary CLI.
+`data-platform-guardrails-rs` is a single-binary CLI.
 
 Flow:
 1. Parse command-line arguments.

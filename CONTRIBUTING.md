@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for contributing to `lakehouse-contracts-rs`.
+Thanks for contributing to `data-platform-guardrails-rs`.
 
 ## Development
 

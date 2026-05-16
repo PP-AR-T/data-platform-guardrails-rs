@@ -1,6 +1,8 @@
 pub mod json;
 pub mod markdown;
 
+use std::path::Path;
+
 use serde::Serialize;
 
 use crate::cli::OutputFormat;
@@ -56,7 +58,7 @@ impl ValidationReport {
 pub fn render_output(
     report: &ValidationReport,
     format: &OutputFormat,
-    config_path: &str,
+    config_path: &Path,
 ) -> String {
     match format {
         OutputFormat::Human => render_human(report, config_path),
@@ -65,9 +67,9 @@ pub fn render_output(
     }
 }
 
-fn render_human(report: &ValidationReport, config_path: &str) -> String {
+fn render_human(report: &ValidationReport, config_path: &Path) -> String {
     let mut lines = vec![
-        format!("Validation report for {config_path}"),
+        format!("Validation report for {}", config_path.display()),
         String::new(),
     ];
 

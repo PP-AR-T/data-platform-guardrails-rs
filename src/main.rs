@@ -21,9 +21,9 @@ fn run() -> Result<()> {
             config_path,
             format,
         } => {
-            let cfg = config::load_config(&config_path)?;
+            let cfg = config::load_config(config_path.as_path())?;
             let report = validation::validate_config(&cfg);
-            let output = report::render_output(&report, &format, &config_path);
+            let output = report::render_output(&report, &format, config_path.as_path());
             println!("{output}");
             let exit_code = if report.has_failures() { 1 } else { 0 };
             std::process::exit(exit_code);

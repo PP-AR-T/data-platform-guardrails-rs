@@ -1,6 +1,6 @@
-# lakehouse-contracts-rs
+# data-platform-guardrails-rs
 
-`lakehouse-contracts-rs` is a small Rust CLI for validating synthetic metadata-driven lakehouse ingestion configuration files.
+`data-platform-guardrails-rs` is a small Rust CLI for validating synthetic metadata-driven lakehouse ingestion configuration files.
 
 It is designed as a generic enterprise data-platform guardrail and is safe for public examples.
 

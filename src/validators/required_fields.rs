@@ -29,10 +29,6 @@ pub fn validate(config: &Config) -> Vec<ValidationItem> {
         validate_entity_required_fields(entity, &mut out);
     }
 
-    if out.is_empty() {
-        out.push(pass(RULE_ID, None, "all required fields are present"));
-    }
-
     out
 }
 
@@ -41,6 +37,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
         .entity_name
         .clone()
         .unwrap_or_else(|| "<unknown>".to_string());
+    let mut local_fail = false;
 
     if entity
         .entity_name
@@ -50,6 +47,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
         .is_none()
     {
         out.push(fail(RULE_ID, Some(name.clone()), "entity_name is required"));
+        local_fail = true;
     }
 
     let source = entity.source.as_ref();
@@ -64,6 +62,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
             Some(name.clone()),
             "source.system is required",
         ));
+        local_fail = true;
     }
 
     if source
@@ -77,6 +76,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
             Some(name.clone()),
             "source.object is required",
         ));
+        local_fail = true;
     }
 
     let target = entity.target.as_ref();
@@ -91,6 +91,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
             Some(name.clone()),
             "target.layer is required",
         ));
+        local_fail = true;
     }
 
     if target
@@ -104,6 +105,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
             Some(name.clone()),
             "target.object is required",
         ));
+        local_fail = true;
     }
 
     let load = entity.load.as_ref();
@@ -118,6 +120,7 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
             Some(name.clone()),
             "load.load_type is required",
         ));
+        local_fail = true;
     }
 
     if load
@@ -126,7 +129,16 @@ fn validate_entity_required_fields(entity: &EntityConfig, out: &mut Vec<Validati
         .filter(|s| !s.is_empty())
         .is_none()
     {
-        out.push(fail(RULE_ID, Some(name), "load.primary_key is required"));
+        out.push(fail(
+            RULE_ID,
+            Some(name.clone()),
+            "load.primary_key is required",
+        ));
+        local_fail = true;
+    }
+
+    if !local_fail {
+        out.push(pass(RULE_ID, Some(name), "all required fields are present"));
     }
 }
 
@@ -172,6 +184,29 @@ entities:
             result
                 .iter()
                 .any(|i| i.message == "source.system is required")
+        );
+    }
+
+    #[test]
+    fn required_fields_emit_pass_for_complete_entity_when_platform_missing() {
+        let cfg: Config = serde_yaml::from_str(
+            r#"
+entities:
+  - entity_name: customer
+    source: { system: source_crm, object: customers }
+    target: { layer: raw, object: raw_customer }
+    load: { load_type: full, primary_key: customer_id }
+"#,
+        )
+        .expect("yaml should parse");
+
+        let result = validate(&cfg);
+        assert!(result.iter().any(|i| i.message == "platform is required"));
+        assert!(
+            result
+                .iter()
+                .any(|i| i.message == "all required fields are present"
+                    && i.entity_name.as_deref() == Some("customer"))
         );
     }
 }

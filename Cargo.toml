@@ -1,5 +1,5 @@
 [package]
-name = "lakehouse-contracts-rs"
+name = "data-platform-guardrails-rs"
 version = "0.1.0"
 edition = "2024"
 
