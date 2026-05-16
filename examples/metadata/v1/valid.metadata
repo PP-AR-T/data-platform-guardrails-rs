@@ -1,0 +1,6 @@
+# line-based fixture used by dpg-adapter FileMetadataSource
+version=v1
+dataset=sales_orders
+field=order_id:string:false
+field=created_at:timestamp:false
+field=amount:decimal:true
