@@ -1,6 +1,6 @@
 # Metadata model migrations
 
-## v1 -> v1
+## v1 (Initial)
 
 Initial baseline version, no migration required.
 
