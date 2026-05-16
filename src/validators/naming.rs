@@ -24,18 +24,18 @@ pub fn validate(config: &Config) -> Vec<ValidationItem> {
             .clone()
             .unwrap_or_else(|| "<unknown>".to_string());
 
-        match entity.entity_name.as_deref() {
-            Some(value) if is_valid_name(value) => {
+        match entity.entity_name.as_deref().map(str::trim) {
+            Some(value) if !value.is_empty() && is_valid_name(value) => {
                 out.push(pass(RULE_ID, Some(name), "entity_name matches convention"));
             }
-            Some(_) => {
+            Some(value) if !value.is_empty() => {
                 out.push(fail(
                     RULE_ID,
                     Some(name),
                     "entity_name must match ^[a-z][a-z0-9_]*$",
                 ));
             }
-            None => {
+            _ => {
                 out.push(fail(
                     RULE_ID,
                     Some(name),
