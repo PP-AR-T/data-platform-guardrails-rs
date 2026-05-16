@@ -43,7 +43,10 @@ mod tests {
 
     #[test]
     fn rejects_empty_dataset_name() {
-        let model = MetadataModel::new("v1", Dataset::new("", vec![Field::new("id", "string", false)]));
+        let model = MetadataModel::new(
+            "v1",
+            Dataset::new("", vec![Field::new("id", "string", false)]),
+        );
         let violations = validate(&model);
         assert!(!violations.is_empty());
     }
@@ -52,7 +55,10 @@ mod tests {
     fn accepts_well_formed_model() {
         let model = MetadataModel::new(
             "v1",
-            Dataset::new("sales_orders", vec![Field::new("order_id", "string", false)]),
+            Dataset::new(
+                "sales_orders",
+                vec![Field::new("order_id", "string", false)],
+            ),
         );
 
         let violations = validate(&model);

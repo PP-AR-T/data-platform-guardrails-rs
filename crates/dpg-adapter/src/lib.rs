@@ -90,7 +90,7 @@ fn parse_metadata_text(content: &str) -> Result<MetadataModel, String> {
                 other => {
                     return Err(format!(
                         "Invalid nullable flag '{other}' in field entry '{value}'"
-                    ))
+                    ));
                 }
             };
 
@@ -113,7 +113,8 @@ mod tests {
 
     #[test]
     fn parses_valid_text_model() {
-        let text = "version=v1\ndataset=sales_orders\nfield=order_id:string\nfield=amount:decimal:true\n";
+        let text =
+            "version=v1\ndataset=sales_orders\nfield=order_id:string\nfield=amount:decimal:true\n";
 
         let parsed = parse_metadata_text(text).expect("expected valid model");
         assert_eq!(parsed.dataset.name, "sales_orders");
