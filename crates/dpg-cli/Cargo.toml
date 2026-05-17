@@ -1,0 +1,12 @@
+[package]
+name = "dpg-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+dpg-adapter = { path = "../dpg-adapter" }
+dpg-rules = { path = "../dpg-rules" }

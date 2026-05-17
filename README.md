@@ -1,5 +1,17 @@
 # data-platform-guardrails-rs
 
+A Rust workspace for validating metadata-driven lakehouse ingestion configurations, schema contracts, naming standards, dependency rules, and CI/CD deployment readiness.
+
+## Repository layout
+
+- `crates/dpg-model`: metadata model entities and version anchors
+- `crates/dpg-rules`: validation rules and evaluation pipeline
+- `crates/dpg-adapter`: source abstractions with optional SQL Server integration
+- `crates/dpg-cli`: command-line validation entrypoint
+- `schemas/`: versioned schema artifacts
+- `examples/`: sample metadata and expected outputs
+- `tests/`: integration scenario structure
+- `docs/`: architecture, governance, decisions, and operations
 `data-platform-guardrails-rs` is a small Rust CLI for validating synthetic metadata-driven lakehouse ingestion configuration files.
 
 It is designed as a generic enterprise data-platform guardrail and is safe for public examples.
@@ -16,6 +28,11 @@ Metadata validation helps teams catch configuration errors before ingestion runs
 ## Quick start
 
 ```bash
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace
+cargo run -p dpg-cli -- examples/metadata/v1/valid.metadata
+```
 cargo run -- validate examples/valid/customer_ingestion.yml
 cargo run -- validate examples/invalid/broken_customer_ingestion.yml
 cargo run -- validate examples/valid/customer_ingestion.yml --format json

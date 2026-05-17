@@ -1,8 +1,13 @@
 name: CI
 
 on:
-  push:
+
   pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 
 permissions:
   contents: read
@@ -13,6 +18,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Feature compile (sqlserver adapter)
+        run: cargo check -p dpg-adapter --all-features
+      - name: Test
+        run: cargo test --workspace
+
+  integration-checks:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Integration test placeholder
+        run: cargo test --workspace
       - name: cargo fmt
         run: cargo fmt --all -- --check
       - name: cargo clippy

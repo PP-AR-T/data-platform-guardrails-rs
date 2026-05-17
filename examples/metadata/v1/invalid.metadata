@@ -1,0 +1,4 @@
+# invalid: dataset is empty and field name is empty
+version=v1
+dataset=
+field=:string:false
