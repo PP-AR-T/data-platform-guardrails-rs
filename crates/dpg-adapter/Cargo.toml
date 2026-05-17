@@ -1,0 +1,15 @@
+[package]
+name = "dpg-adapter"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = []
+sqlserver = []
+
+[lints]
+workspace = true
+
+[dependencies]
+dpg-model = { path = "../dpg-model" }
